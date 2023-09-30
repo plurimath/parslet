@@ -5,9 +5,9 @@ $:.unshift File.dirname(__FILE__) + "/../lib"
 
 require 'parslet'
 
-class Parser < Parslet::Parser
+class MyParser < Parslet::Parser
   rule(:empty) { }
 end
 
 
-Parser.new.empty.parslet
+MyParser.new.empty.parslet

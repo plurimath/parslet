@@ -1,3 +1,4 @@
+require_relative 'support/opal' if RUBY_ENGINE == 'opal'
 
 require 'parslet'
 

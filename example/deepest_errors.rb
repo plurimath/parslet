@@ -15,7 +15,7 @@ def prettify(str)
   end
 end
 
-class Parser < Parslet::Parser
+class MyParser < Parslet::Parser
   # commons
 
   rule(:space) { match('[ \t]').repeat(1) }
@@ -120,7 +120,7 @@ ds.each do |d|
   puts '-' * 80
   prettify(d)
 
-  parser = Parser.new
+  parser = MyParser.new
 
   begin
     parser.parse_with_debug(d, 

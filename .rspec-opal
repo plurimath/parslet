@@ -1,0 +1,5 @@
+--default-path=spec
+-I lib
+--opal-opt=-g,ae
+--opal-opt=-g,flexmock
+-I spec/support/opal

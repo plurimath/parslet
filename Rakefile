@@ -3,6 +3,7 @@ require 'sdoc'
 
 require 'rspec/core/rake_task'
 require "rubygems/package_task"
+require 'opal/rspec/rake_task'
 
 desc "Run all tests: Exhaustive."
 RSpec::Core::RakeTask.new
@@ -12,6 +13,8 @@ namespace :spec do
   RSpec::Core::RakeTask.new(:unit) do |task|
     task.pattern = "spec/parslet/**/*_spec.rb"
   end
+
+  Opal::RSpec::RakeTask.new(:opal)
 end
 
 task :default => :spec
@@ -27,4 +30,3 @@ task :stat do
     printf("%20s %d\n", dir, loc)
   end
 end
-

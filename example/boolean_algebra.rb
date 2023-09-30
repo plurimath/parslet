@@ -13,7 +13,7 @@ require "pp"
 # array are connected with "or" operator, while elements of inner arrays are
 # joined with "and".
 #
-class Parser < Parslet::Parser
+class MyParser < Parslet::Parser
   rule(:space)  { match[" "].repeat(1) }
   rule(:space?) { space.maybe }
 
@@ -61,7 +61,7 @@ class Transformer < Parslet::Transform
   end
 end
 
-pp tree = Parser.new.parse("var1 and (var2 or var3)")
+pp tree = MyParser.new.parse("var1 and (var2 or var3)")
 # {:and=>
 #   {:left=>{:var=>"1"@3},
 #    :right=>{:or=>{:left=>{:var=>"2"@13}, :right=>{:var=>"3"@21}}}}}

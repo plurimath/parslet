@@ -28,39 +28,39 @@ class Parslet::Parser
       end
 
       def visit_sequence(parslets)
-        '(' <<
+        '(' +
         parslets.
           map { |el| el.accept(self) }.
-          join(' ') <<
+          join(' ') +
         ')'
       end
       def visit_repetition(tag, min, max, parslet)
-        parslet.accept(self) << "#{min}*#{max}"
+        parslet.accept(self) + "#{min}*#{max}"
       end
       def visit_alternative(alternatives)
-        '(' <<
+        '(' +
         alternatives.
           map { |el| el.accept(self) }.
-          join(' | ') <<
+          join(' | ') +
         ')'
       end
 
       def visit_lookahead(positive, bound_parslet)
-        (positive ? '&' : '!') <<
+        (positive ? '&' : '!') +
         bound_parslet.accept(self)
       end
     end
 
     class Treetop < Citrus
       def visit_repetition(tag, min, max, parslet)
-        parslet.accept(self) << "#{min}..#{max}"
+        parslet.accept(self) + "#{min}..#{max}"
       end
 
       def visit_alternative(alternatives)
-        '(' <<
+        '(' +
         alternatives.
           map { |el| el.accept(self) }.
-          join(' / ') <<
+          join(' / ') +
         ')'
       end
     end
@@ -79,7 +79,7 @@ class Parslet::Parser
     # Citrus or Treetop grammar.
     #
     def pretty_print(name, parslet)
-      output = "grammar #{name}\n"
+      output = ["grammar #{name}\n"]
       
       output << rule('root', parslet)
       
@@ -98,13 +98,14 @@ class Parslet::Parser
       end
       
       output << "end\n"
+      output.join
     end
     
     # Formats a rule in either dialect. 
     #
     def rule(name, parslet)
-      "  rule #{mangle_name name}\n" << 
-      "    " << parslet.accept(visitor) << "\n" <<
+      "  rule #{mangle_name name}\n" +
+      "    " + parslet.accept(visitor) + "\n" +
       "  end\n"
     end
     

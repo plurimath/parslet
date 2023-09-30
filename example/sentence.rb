@@ -7,7 +7,7 @@ $:.unshift File.dirname(__FILE__) + "/../lib"
 
 require 'parslet'
 
-class Parser < Parslet::Parser
+class MyParser < Parslet::Parser
   rule(:sentence) { (match('[^。]').repeat(1) >> str("。")).as(:sentence) }
   rule(:sentences) { sentence.repeat }
   root(:sentences)
@@ -29,7 +29,7 @@ string =
   "すり合わせるべきものをすり合わせ、変えていくべきところを " +
   "変えていくことが、豊かな未来へとつながる道に違いありません。"
 
-parser = Parser.new
+parser = MyParser.new
 transformer = Transformer.new
 
 tree = parser.parse(string)

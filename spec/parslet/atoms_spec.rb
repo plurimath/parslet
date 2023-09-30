@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-require 'timeout'
+require 'timeout' unless RUBY_ENGINE == 'opal'
 require 'parslet'
 
 describe Parslet do
@@ -227,7 +227,7 @@ describe Parslet do
       lambda {
         Timeout.timeout(1) { parslet.parse('bar') }
       }.should raise_error(Parslet::ParseFailed)
-    end 
+    end unless RUBY_ENGINE == 'opal'
   end
   describe "any" do
     attr_reader :parslet
