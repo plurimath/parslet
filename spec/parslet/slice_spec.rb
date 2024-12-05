@@ -1,45 +1,45 @@
 require 'spec_helper'
 
 describe Parslet::Slice do
-  def cslice string, offset, cache=nil
+  def cslice string, offset, charoff, cache=nil
     described_class.new(
-      Parslet::Position.new(string, offset), 
+      Parslet::Position.new(string, offset, charoff),
       string, cache)
   end
 
   describe "construction" do
     it "should construct from an offset and a string" do
-      cslice('foobar', 40)
+      cslice('foobar', 40, 6)
     end
   end
   context "('foobar', 40, 'foobar')" do
-    let(:slice) { cslice('foobar', 40) }
+    let(:slice) { cslice('foobar', 40, 6) }
     describe "comparison" do
       it "should be equal to other slices with the same attributes" do
-        other = cslice('foobar', 40)
+        other = cslice('foobar', 40, 40)
         slice.should == other
         other.should == slice
-      end 
+      end
       it "should be equal to other slices (offset is irrelevant for comparison)" do
-        other = cslice('foobar', 41)
+        other = cslice('foobar', 41, 41)
         slice.should == other
         other.should == slice
-      end 
+      end
       it "should be equal to a string with the same content" do
         slice.should == 'foobar'
       end
       it "should be equal to a string (inversed operands)" do
         'foobar'.should == slice
-      end 
+      end
       it "should not be equal to a string" do
         slice.should_not equal('foobar')
-      end 
+      end
       it "should not be eql to a string" do
         slice.should_not eql('foobar')
-      end 
+      end
       it "should not hash to the same number" do
         slice.hash.should_not == 'foobar'.hash
-      end 
+      end
     end
     describe "offset" do
       it "should return the associated offset" do
@@ -49,11 +49,11 @@ describe Parslet::Slice do
         lambda {
           slice.line_and_column
         }.should raise_error(ArgumentError)
-      end 
-      
+      end
+
       context "when constructed with a source" do
         let(:slice) { cslice(
-          'foobar', 40,  
+          'foobar', 40, 40,
           flexmock(:cache, :line_and_column => [13, 14])) }
         it "should return proper line and column" do
           slice.line_and_column.should == [13, 14]
@@ -72,51 +72,51 @@ describe Parslet::Slice do
       end
       describe "<- #size" do
         subject { slice.size }
-        it { should == 6 } 
+        it { should == 6 }
       end
       describe "<- #length" do
         subject { slice.length }
-        it { should == 6 } 
+        it { should == 6 }
       end
       describe "<- #+" do
-        let(:other) { cslice('baz', 10) }
+        let(:other) { cslice('baz', 10, 10) }
         subject { slice + other }
-        
+
         it "should concat like string does" do
           subject.size.should == 9
           subject.should == 'foobarbaz'
           subject.offset.should == 6
-        end 
+        end
       end
     end
     describe "conversion" do
       describe "<- #to_slice" do
         it "should return self" do
           slice.to_slice.should eq(slice)
-        end 
+        end
       end
       describe "<- #to_sym" do
         it "should return :foobar" do
           slice.to_sym.should == :foobar
-        end 
+        end
       end
       describe "cast to Float" do
         it "should return a float" do
-          Float(cslice('1.345', 11)).should == 1.345
-        end 
+          Float(cslice('1.345', 11, 11)).should == 1.345
+        end
       end
       describe "cast to Integer" do
         it "should cast to integer as a string would" do
-          s = cslice('1234', 40)
+          s = cslice('1234', 40, 40)
           Integer(s).should == 1234
           s.to_i.should == 1234
-        end 
+        end
         it "should fail when Integer would fail on a string" do
           lambda { Integer(slice.to_s) }.should raise_error(ArgumentError, /invalid value/)
         end
         it "should turn into zero when a string would" do
           slice.to_i.should == 0
-        end 
+        end
       end
     end
     describe "inspection and string conversion" do
@@ -134,7 +134,7 @@ describe Parslet::Slice do
         Marshal.dump(slice)
       end
       context "when storing a line cache" do
-        let(:slice) { cslice('foobar', 40, Parslet::Source::LineCache.new()) }
+        let(:slice) { cslice('foobar', 40, 40, Parslet::Source::LineCache.new()) }
         it "should serialize" do
           Marshal.dump(slice)
         end
