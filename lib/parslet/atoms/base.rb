@@ -8,6 +8,8 @@ class Parslet::Atoms::Base
   include Parslet::Atoms::DSL
   include Parslet::Atoms::CanFlatten
 
+  EMPTY_RE = Regexp.compile("")
+
   # Parslet label as provided in grammar
   attr_accessor :label
 
@@ -128,6 +130,17 @@ class Parslet::Atoms::Base
   #
   def cached?
     true
+  end
+
+  def lookahead?(source)
+    # Assume lookup is successful by default
+    # Override in child classes by need
+    true
+  end
+
+  def first_char_re
+    # Override in child classes by need
+    EMPTY_RE
   end
 
   # Debug printing - in Treetop syntax. 

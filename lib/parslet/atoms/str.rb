@@ -20,7 +20,20 @@ class Parslet::Atoms::Str < Parslet::Atoms::Base
       failed: "Expected #{str.inspect}, but got "
     }
   end
-  
+
+  def lookahead?(source)
+    source.lookahead?(@pat)
+  end
+
+  def compute_re
+    return @re1 unless @re1.nil?
+    @re1 = Regexp.compile(Regexp.escape(@str[0]))
+  end
+
+  def first_char_re
+    compute_re
+  end
+
   def try(source, context, consume_all)
     return succ(source.consume(@len)) if source.matches?(@pat)
     

@@ -28,7 +28,12 @@ class Parslet::Atoms::Repetition < Parslet::Atoms::Base
       unconsumed: 'Extra input after last repetition'
     }
   end
-  
+
+  def lookahead?(source)
+    return true if @min == 0
+    @parslet.lookahead?(source)
+  end
+
   def try(source, context, consume_all)
     occ = 0
     accum = [@tag]   # initialize the result array with the tag (for flattening)

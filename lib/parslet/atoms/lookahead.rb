@@ -22,13 +22,35 @@ class Parslet::Atoms::Lookahead < Parslet::Atoms::Base
       :negative => ["Input should not start with ", bound_parslet]
     }
   end
-  
+
+  def match
+    next_re = @bound_parslet.match
+    return next_re if @positive
+    "[^" + next_re[1...]
+  end
+
+  def lookahead?(source)
+    return @bound_parslet.lookahead?(source) if @positive
+    # negative case covered in `try`
+    true
+  end
+
+  def first_char_re
+    return @bound_parslet.first_char_re if @positive
+    EMPTY_RE
+  end
+
   def try(source, context, consume_all)
     rewind_pos  = source.bytepos
     error_pos   = source.pos
 
+    # Exit early for non-match
+    if not positive and not bound_parslet.lookahead?(source)
+      return succ(nil)
+    end
+
     success, _ = bound_parslet.apply(source, context, consume_all)
-    
+
     if positive
       return succ(nil) if success
       return context.err_at(self, source, error_msgs[:positive], error_pos)
@@ -36,10 +58,10 @@ class Parslet::Atoms::Lookahead < Parslet::Atoms::Base
       return succ(nil) unless success
       return context.err_at(self, source, error_msgs[:negative], error_pos)
     end
-    
-  # This is probably the only parslet that rewinds its input in #try.
-  # Lookaheads NEVER consume their input, even on success, that's why. 
-  ensure 
+
+    # This is probably the only parslet that rewinds its input in #try.
+    # Lookaheads NEVER consume their input, even on success, that's why.
+  ensure
     source.bytepos = rewind_pos
   end
   

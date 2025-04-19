@@ -19,6 +19,14 @@ class Parslet::Atoms::Entity < Parslet::Atoms::Base
     @parslet = nil
   end
 
+  def lookahead?(source)
+    parslet.lookahead?(source)
+  end
+
+  def first_char_re
+    parslet.first_char_re
+  end
+
   def try(source, context, consume_all)
     parslet.apply(source, context, consume_all)
   end
