@@ -6,8 +6,8 @@ require 'rdoc/task'
 
 begin
   require 'opal/rspec/rake_task'
-rescue LoadError
-  # Opal not available
+rescue LoadError, NoMethodError
+  # Opal not available or incompatible with current Ruby version
 end
 
 desc 'Run all tests'
@@ -42,5 +42,28 @@ task :stat do
     printf("%20s %d\n", dir, loc)
   end
 end
+
+namespace :benchmark do
+  desc 'Run comprehensive benchmark suite'
+  task :all do
+    ruby 'benchmark/benchmark_suite.rb'
+  end
+
+  desc 'Run example-focused benchmarks'
+  task :examples do
+    ruby 'benchmark/example_benchmarks.rb'
+  end
+
+  desc 'Run benchmarks and export results to JSON/YAML'
+  task :export do
+    ruby 'benchmark/benchmark_runner.rb'
+  end
+
+  desc 'Run quick benchmark (examples only)'
+  task quick: :examples
+end
+
+desc 'Run quick benchmarks'
+task benchmark: 'benchmark:quick'
 
 task default: :spec

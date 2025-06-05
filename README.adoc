@@ -5,7 +5,6 @@ This is a fork of the original Parslet gem, which is a parser library for Ruby.
 This differs from the original Parslet gem, such that it is Opal (JS based Ruby)
 compatible.
 
-
 == Introduction
 
 Parslet makes developing complex parsers easy. It does so by:
@@ -127,19 +126,153 @@ After checking out the repo, run:
 $ bundle install
 ----
 
-To run the tests:
+=== Available rake tasks
 
-[source,bash]
-----
-$ bundle exec rake spec
-----
+==== Testing
 
-To run Opal (JavaScript) tests:
+* `rake spec` - Run all tests (438 examples covering all functionality)
+* `rake spec:unit` - Run unit tests only
+* `rake spec:opal` - Run Opal (JavaScript) tests
 
-[source,bash]
+==== Benchmarking
+
+* `rake benchmark` - Run quick benchmarks (alias for benchmark:quick)
+* `rake benchmark:quick` - Run example-focused benchmarks only
+* `rake benchmark:examples` - Run example-focused benchmarks
+* `rake benchmark:all` - Run comprehensive benchmark suite (all categories)
+* `rake benchmark:export` - Run benchmarks and export results to JSON/YAML files
+
+===== What gets benchmarked
+
+The benchmark suite measures parsing performance across different scenarios:
+
+**Basic Parsing Operations**
+
+* `str('hello')` - Simple string matching performance
+* `match('[a-z]').repeat(1)` - Character class matching with repetition
+* Email-like pattern matching - Complex regex-style parsing (`user@example.com`)
+
+**Calculator Parser** (from `example/calc.rb`)
+
+* Simple expressions: `1+2`
+* Medium complexity: `1+2*3-4/2`
+* Complex expressions: `123*456+789-321/3*2+1`
+* Full pipeline (parse + transform + evaluate)
+
+**JSON Parser** (from `example/json.rb`)
+
+* Simple objects: `{"key": "value"}`
+* Arrays: `[1, 2, 3, 4, 5]`
+* Complex nested structures with multiple data types
+* Parse vs. transform performance comparison
+
+**String Parsing**
+
+* Simple quoted strings: `"hello world"`
+* Long strings (1000+ characters)
+* Escaped strings with backslash sequences: `"hello \"world\" with escapes"`
+
+**Repetition Patterns**
+
+* `repeat(1)` with varying input lengths (short/medium/long)
+* Bounded repetition `repeat(3,6)`
+* Optional repetition `repeat` (zero or more)
+* Performance scaling with input size
+
+**Transform Operations**
+
+* Simple AST transformations (number/string conversion)
+* Medium complexity (multiple rules, arrays)
+* Complex nested transformations with multiple rule types
+
+===== Sample benchmark output
+
+[example]
+====
+[source]
 ----
-$ bundle exec rake spec:opal
+Plurimath Parslet Performance Benchmarks
+==================================================
+
+Basic Parsing Operations
+------------------------------
+ruby 3.3.2 (2024-05-30 revision e5a195edf6) [arm64-darwin23]
+Warming up --------------------------------------
+        str('hello')    17.235k i/100ms
+match('[a-z]').repeat(1)
+                         3.502k i/100ms
+  email-like pattern     2.780k i/100ms
+Calculating -------------------------------------
+        str('hello')    174.636k (± 2.1%) i/s    (5.73 μs/i)
+match('[a-z]').repeat(1)
+                         35.182k (± 2.6%) i/s   (28.42 μs/i)
+  email-like pattern     27.874k (± 8.5%) i/s   (35.88 μs/i)
+
+Comparison:
+        str('hello'):   174636.1 i/s
+match('[a-z]').repeat(1):    35182.1 i/s - 4.96x  slower
+  email-like pattern:    27873.8 i/s - 6.27x  slower
+
+Calculator Parser Benchmarks
+------------------------------
+ parse simple: '1+2'     18.791k (± 3.2%) i/s   (53.22 μs/i)
+parse medium: '1+2*3-4/2'
+                          8.871k (± 6.4%) i/s  (112.73 μs/i)
+parse complex: '123*456+789-321/3*2+1'
+                          5.872k (± 4.3%) i/s  (170.30 μs/i)
+    full calc simple      7.516k (± 8.5%) i/s  (133.06 μs/i)
+   full calc complex      3.018k (± 1.9%) i/s  (331.34 μs/i)
 ----
+====
+
+===== Benchmark results export
+
+Results are exported to multiple formats for analysis:
+
+* `benchmark/results.json` - Detailed benchmark data with iterations/second, standard deviation, and microseconds per iteration
+* `benchmark/results.yaml` - YAML format results for easy reading
+* `benchmark/summary.json` - Performance summary with fastest/slowest operations and insights
+* `benchmark/summary.yaml` - YAML format summary
+
+The exported data includes:
+
+* Ruby version and platform information
+* Parslet version and benchmark tool versions
+* Detailed performance metrics for each test case
+* Statistical analysis (standard deviation, error percentages)
+* Performance comparisons and insights
+* Identification of performance bottlenecks and optimization opportunities
+
+==== Building and distribution
+
+* `rake build` - Build plurimath-parslet-3.0.0.gem into the pkg directory
+* `rake build:checksum` - Generate SHA512 checksum of the gem
+* `rake install` - Build and install gem into system gems
+* `rake install:local` - Build and install gem without network access
+* `rake release[remote]` - Create tag and push gem to rubygems.org
+
+==== Documentation
+
+* `rake rdoc` - Build RDoc HTML files
+* `rake rdoc:coverage` - Print RDoc coverage report
+* `rake rerdoc` - Rebuild RDoc HTML files
+
+==== Maintenance
+
+* `rake clean` - Remove temporary products
+* `rake clobber` - Remove generated files
+* `rake clobber_rdoc` - Remove RDoc HTML files
+* `rake stat` - Print lines of code statistics
+
+=== Example coverage
+
+All 25 examples in the `example/` directory are covered by specs and tested automatically:
+
+* boolean_algebra.rb, calc.rb, capture.rb, comments.rb, deepest_errors.rb
+* documentation.rb, email_parser.rb, empty.rb, erb.rb, ip_address.rb
+* json.rb, local.rb, mathn.rb, minilisp.rb, modularity.rb
+* nested_errors.rb, optimized_erb.rb, parens.rb, prec_calc.rb, readme.rb
+* scopes.rb, seasons.rb, sentence.rb, simple_xml.rb, string_parser.rb
 
 == Contributing
 
