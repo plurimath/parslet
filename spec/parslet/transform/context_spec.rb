@@ -4,7 +4,7 @@ describe Parslet::Context do
   def context(*args)
     described_class.new(*args)
   end
-  
+
   it "binds hash keys as variable like things" do
     context(:a => 'value').instance_eval { a }.
       should == 'value'
@@ -21,16 +21,16 @@ describe Parslet::Context do
     let(:obj) { context(a: 1) }
 
     it 'responds_to? :a' do
-      assert obj.respond_to?(:a)
+      expect(obj.respond_to?(:a)).to be_truthy
     end
     it 'includes :a in #methods' do
-      obj.methods.assert.include?(:a)
+      expect(obj.methods).to include(:a)
     end
     it 'allows inspection' do
-      obj.inspect.assert.match(/@a=1/)
+      expect(obj.inspect).to match(/@a=1/)
     end
     it 'allows conversion to string' do
-      obj.to_s.assert.match(/Parslet::Context:0x/)
+      expect(obj.to_s).to match(/Parslet::Context:0x/)
     end
 
     context 'when the context is enhanced' do
@@ -43,13 +43,13 @@ describe Parslet::Context do
       end
 
       it 'responds_to correctly' do
-        assert obj.respond_to?(:foo)
+        expect(obj.respond_to?(:foo)).to be_truthy
       end
       it 'includes :foo also in methods' do
-        obj.methods.assert.include?(:foo)
+        expect(obj.methods).to include(:foo)
       end
       it 'allows calling #foo' do
-        obj.foo.assert == 'foo'
+        expect(obj.foo).to eq('foo')
       end
     end
   end

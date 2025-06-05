@@ -1,32 +1,46 @@
-require 'rdoc/task'
-require 'sdoc'
+# frozen_string_literal: true
 
+require 'bundler/gem_tasks'
 require 'rspec/core/rake_task'
-require "rubygems/package_task"
-require 'opal/rspec/rake_task'
+require 'rdoc/task'
 
-desc "Run all tests: Exhaustive."
-RSpec::Core::RakeTask.new
-
-namespace :spec do
-  desc "Only run unit tests: Fast. "
-  RSpec::Core::RakeTask.new(:unit) do |task|
-    task.pattern = "spec/parslet/**/*_spec.rb"
-  end
-
-  Opal::RSpec::RakeTask.new(:opal)
+begin
+  require 'opal/rspec/rake_task'
+rescue LoadError
+  # Opal not available
 end
 
-task :default => :spec
+desc 'Run all tests'
+RSpec::Core::RakeTask.new(:spec)
 
-# This task actually builds the gem. 
-task :gem => :spec
-spec = eval(File.read('parslet.gemspec'))
+namespace :spec do
+  desc 'Run unit tests only'
+  RSpec::Core::RakeTask.new(:unit) do |task|
+    task.pattern = 'spec/parslet/**/*_spec.rb'
+  end
 
-desc "Prints LOC stats"
+  if defined?(Opal::RSpec::RakeTask)
+    desc 'Run Opal (JavaScript) tests'
+    Opal::RSpec::RakeTask.new(:opal)
+  end
+end
+
+RDoc::Task.new do |rdoc|
+  rdoc.rdoc_dir = 'rdoc'
+  rdoc.title = 'Plurimath Parslet'
+  rdoc.options << '--line-numbers'
+  rdoc.rdoc_files.include('README.adoc')
+  rdoc.rdoc_files.include('lib/**/*.rb')
+end
+
+desc 'Print LOC statistics'
 task :stat do
-  %w(lib spec example).each do |dir|
-    loc = %x(find #{dir} -name "*.rb" | xargs wc -l | grep 'total').split.first.to_i
+  %w[lib spec example].each do |dir|
+    next unless Dir.exist?(dir)
+
+    loc = `find #{dir} -name "*.rb" | xargs wc -l | grep 'total'`.split.first.to_i
     printf("%20s %d\n", dir, loc)
   end
 end
+
+task default: :spec
