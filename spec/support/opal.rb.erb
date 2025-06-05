@@ -1,11 +1,10 @@
 # A set of patches required to run Opal-RSpec
 require 'nodejs/yaml'
-require 'rspec/core/mocking_adapters/flexmock'
 
 module AE
   # Compile in AE metadata
   @metadata = (
-      <%= 
+      <%=
         require 'yaml'
         YAML.load(
           File.read(
@@ -13,4 +12,3 @@ module AE
       %>
     )
 end
-

@@ -72,7 +72,15 @@ module Parslet
     # @note Please be aware of encodings at this point.
     #
     def pos
-      Position.new(@str.string, @str.pos, @str.charpos)
+      # Opal's StringScanner doesn't support charpos, so we calculate it manually
+      if defined?(RUBY_ENGINE) && RUBY_ENGINE == 'opal'
+        # For Opal, calculate character position from the consumed string
+        consumed_string = @str.string[0, @str.pos]
+        char_pos = consumed_string.length
+        Position.new(@str.string, @str.pos, char_pos)
+      else
+        Position.new(@str.string, @str.pos, @str.charpos)
+      end
     end
     def bytepos
       @str.pos

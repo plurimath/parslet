@@ -77,7 +77,8 @@ This library is intended to work with Ruby variants >= 2.7. It has been tested o
 
 * MRI Ruby 2.7+
 * JRuby
-* Opal (JavaScript-based Ruby)
+
+NOTE: Opal (JavaScript-based Ruby) compatibility is currently limited due to dependency issues with newer Ruby versions. The Opal ecosystem has compatibility challenges with Ruby 3.3+.
 
 Please report as a bug if you encounter issues.
 
@@ -132,7 +133,8 @@ $ bundle install
 
 * `rake spec` - Run all tests (438 examples covering all functionality)
 * `rake spec:unit` - Run unit tests only
-* `rake spec:opal` - Run Opal (JavaScript) tests
+
+NOTE: Opal (JavaScript) tests are currently disabled due to compatibility issues with Ruby 3.3+. The Opal gem uses deprecated methods that were removed in newer Ruby versions.
 
 ==== Benchmarking
 

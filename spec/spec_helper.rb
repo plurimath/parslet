@@ -8,12 +8,6 @@ require 'parslet/atoms/visitor'
 require 'parslet/export'
 
 begin
-  require 'flexmock/rspec'
-rescue LoadError
-  # flexmock not available
-end
-
-begin
   require 'ae'
 rescue LoadError
   # AE not available
@@ -22,17 +16,13 @@ end
 RSpec.configure do |config|
   # Allow both old and new syntax for backward compatibility
   config.expect_with :rspec do |expectations|
-    expectations.syntax = [:should, :expect]
+    expectations.syntax = %i[should expect]
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
   end
 
-  # Use flexmock if available, otherwise use rspec mocks
-  begin
-    config.mock_with :flexmock
-  rescue NameError
-    config.mock_with :rspec do |mocks|
-      mocks.verify_partial_doubles = true
-    end
+  # Use rspec mocks
+  config.mock_with :rspec do |mocks|
+    mocks.verify_partial_doubles = true
   end
 
   # Shared context and examples

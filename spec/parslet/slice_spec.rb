@@ -1,68 +1,86 @@
 require 'spec_helper'
 
 describe Parslet::Slice do
-  def cslice string, offset, charoff, cache=nil
+  def cslice(string, offset, charoff, cache = nil)
     described_class.new(
       Parslet::Position.new(string, offset, charoff),
-      string, cache)
+      string, cache
+    )
   end
 
-  describe "construction" do
-    it "should construct from an offset and a string" do
+  describe 'construction' do
+    it 'constructs from an offset and a string' do
       cslice('foobar', 40, 6)
     end
   end
+
   context "('foobar', 40, 'foobar')" do
     let(:slice) { cslice('foobar', 40, 6) }
-    describe "comparison" do
-      it "should be equal to other slices with the same attributes" do
+
+    describe 'comparison' do
+      it 'is equal to other slices with the same attributes' do
         other = cslice('foobar', 40, 40)
         slice.should == other
         other.should == slice
       end
-      it "should be equal to other slices (offset is irrelevant for comparison)" do
+
+      it 'is equal to other slices (offset is irrelevant for comparison)' do
         other = cslice('foobar', 41, 41)
         slice.should == other
         other.should == slice
       end
-      it "should be equal to a string with the same content" do
+
+      it 'is equal to a string with the same content' do
         slice.should == 'foobar'
       end
-      it "should be equal to a string (inversed operands)" do
+
+      it 'is equal to a string (inversed operands)' do
         'foobar'.should == slice
       end
-      it "should not be equal to a string" do
+
+      it 'is not equal to a string' do
         slice.should_not equal('foobar')
       end
-      it "should not be eql to a string" do
+
+      it 'is not eql to a string' do
         slice.should_not eql('foobar')
       end
-      it "should not hash to the same number" do
+
+      it 'does not hash to the same number' do
         slice.hash.should_not == 'foobar'.hash
       end
     end
-    describe "offset" do
-      it "should return the associated offset" do
+
+    describe 'offset' do
+      it 'returns the associated offset' do
         slice.offset.should == 6
       end
-      it "should fail to return a line and column" do
+
+      it 'fails to return a line and column' do
         lambda {
           slice.line_and_column
         }.should raise_error(ArgumentError)
       end
 
-      context "when constructed with a source" do
-        let(:slice) { cslice(
-          'foobar', 40, 40,
-          flexmock(:cache, :line_and_column => [13, 14])) }
-        it "should return proper line and column" do
+      context 'when constructed with a source' do
+        let(:slice) do
+          cache = Parslet::Source::LineCache.new
+          cache.instance_variable_set(:@line_and_column, [13, 14])
+          def cache.line_and_column(pos)
+            @line_and_column
+          end
+          cslice('foobar', 40, 40, cache)
+        end
+
+        it 'returns proper line and column' do
           slice.line_and_column.should == [13, 14]
         end
       end
     end
-    describe "string methods" do
-      describe "matching" do
-        it "should match as a string would" do
+
+    describe 'string methods' do
+      describe 'matching' do
+        it 'matches as a string would' do
           slice.should match(/bar/)
           slice.should match(/foo/)
 
@@ -70,72 +88,91 @@ describe Parslet::Slice do
           md.captures.first.should == 'o'
         end
       end
-      describe "<- #size" do
+
+      describe '<- #size' do
         subject { slice.size }
-        it { should == 6 }
+
+        it { is_expected.to eq(6) }
       end
-      describe "<- #length" do
+
+      describe '<- #length' do
         subject { slice.length }
-        it { should == 6 }
+
+        it { is_expected.to eq(6) }
       end
-      describe "<- #+" do
-        let(:other) { cslice('baz', 10, 10) }
+
+      describe '<- #+' do
         subject { slice + other }
 
-        it "should concat like string does" do
+        let(:other) { cslice('baz', 10, 10) }
+
+        it 'concats like string does' do
           subject.size.should == 9
           subject.should == 'foobarbaz'
           subject.offset.should == 6
         end
       end
     end
-    describe "conversion" do
-      describe "<- #to_slice" do
-        it "should return self" do
+
+    describe 'conversion' do
+      describe '<- #to_slice' do
+        it 'returns self' do
           slice.to_slice.should eq(slice)
         end
       end
-      describe "<- #to_sym" do
-        it "should return :foobar" do
+
+      describe '<- #to_sym' do
+        it 'returns :foobar' do
           slice.to_sym.should == :foobar
         end
       end
-      describe "cast to Float" do
-        it "should return a float" do
+
+      describe 'cast to Float' do
+        it 'returns a float' do
           Float(cslice('1.345', 11, 11)).should == 1.345
         end
       end
-      describe "cast to Integer" do
-        it "should cast to integer as a string would" do
+
+      describe 'cast to Integer' do
+        it 'casts to integer as a string would' do
           s = cslice('1234', 40, 40)
           Integer(s).should == 1234
           s.to_i.should == 1234
         end
-        it "should fail when Integer would fail on a string" do
-          lambda { Integer(slice.to_s) }.should raise_error(ArgumentError, /invalid value/)
+
+        it 'fails when Integer would fail on a string' do
+          -> { Integer(slice.to_s) }.should raise_error(ArgumentError, /invalid value/)
         end
-        it "should turn into zero when a string would" do
+
+        it 'turns into zero when a string would' do
           slice.to_i.should == 0
         end
       end
     end
-    describe "inspection and string conversion" do
-      describe "#inspect" do
+
+    describe 'inspection and string conversion' do
+      describe '#inspect' do
         subject { slice.inspect }
-        it { should == '"foobar"@6' }
+
+        it { is_expected.to eq('"foobar"@6') }
       end
-      describe "#to_s" do
+
+      describe '#to_s' do
         subject { slice.to_s }
-        it { should == 'foobar' }
+
+        it { is_expected.to eq('foobar') }
       end
     end
-    describe "serializability" do
-      it "should serialize" do
+
+    describe 'serializability' do
+      it 'serializes' do
         Marshal.dump(slice)
       end
-      context "when storing a line cache" do
-        let(:slice) { cslice('foobar', 40, 40, Parslet::Source::LineCache.new()) }
-        it "should serialize" do
+
+      context 'when storing a line cache' do
+        let(:slice) { cslice('foobar', 40, 40, Parslet::Source::LineCache.new) }
+
+        it 'serializes' do
           Marshal.dump(slice)
         end
       end
