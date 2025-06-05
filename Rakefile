@@ -21,7 +21,9 @@ namespace :spec do
 
   if defined?(Opal::RSpec::RakeTask)
     desc 'Run Opal (JavaScript) tests'
-    Opal::RSpec::RakeTask.new(:opal)
+    Opal::RSpec::RakeTask.new(:opal) do |task|
+      task.append_path 'lib'
+    end
   end
 end
 

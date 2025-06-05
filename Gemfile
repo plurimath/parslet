@@ -5,9 +5,10 @@ source 'https://rubygems.org'
 gemspec
 
 group :development, :test do
-  gem 'flexmock', '~> 2.0'
-  gem 'opal-rspec', '~> 0.8'
-  gem 'opal-sprockets', '~> 0.4'
+  gem 'base64'
+  gem 'opal', '~> 1.8'
+  gem 'opal-rspec', '~> 1.0'
+  gem 'opal-sprockets', '~> 1.0'
   gem 'qed', '~> 2.9'
   gem 'rake', '~> 13.0'
   gem 'rdoc', '~> 6.0'
