@@ -6,7 +6,7 @@ gemspec
 
 group :development, :test do
   gem 'base64'
-  gem 'opal', '~> 1.8'
+  gem 'opal', path: 'vendor/opal'
   gem 'opal-rspec', '~> 1.0'
   gem 'opal-sprockets', '~> 1.0'
   gem 'qed', '~> 2.9'

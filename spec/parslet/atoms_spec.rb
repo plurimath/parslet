@@ -33,7 +33,7 @@ describe Parslet do
       cause = catch_failed_parse do
         parslet.parse('d')
       end
-      cause.to_s.should == 'Failed to match [abc] at line 1 char 1.'
+      expect(cause.to_s).to eq('Failed to match [abc] at line 1 char 1.')
     end
 
     it 'prints as [abc]' do
@@ -309,11 +309,9 @@ describe Parslet do
       attr_reader :exception
 
       before do
-        begin
-          parslet.parse('a.')
-        rescue StandardError => e
-          @exception = e
-        end
+        parslet.parse('a.')
+      rescue StandardError => e
+        @exception = e
       end
 
       it 'raises Parslet::ParseFailed' do
@@ -406,8 +404,7 @@ describe Parslet do
 
     context "str('a').as(:a).repeat" do
       it 'returns an array of subtrees' do
-        str('a').as(:a).repeat
-          .parse('aa').should == [{ a: 'a' }, { a: 'a' }]
+        expect(str('a').as(:a).repeat.parse('aa')).to eq([{ a: 'a' }, { a: 'a' }])
       end
     end
   end

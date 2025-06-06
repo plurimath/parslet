@@ -1,4 +1,3 @@
-
 # A slice is a small part from the parse input. A slice mainly behaves like
 # any other string, except that it remembers where it came from (offset in
 # original input).
@@ -23,14 +22,12 @@
 # delegation, we opt for a partial emulation that gets the job done.
 #
 class Parslet::Slice
-  attr_reader :str
-  attr_reader :position
-  attr_reader :line_cache
+  attr_reader :str, :position, :line_cache
 
-  # Construct a slice using a string, an offset and an optional line cache. 
-  # The line cache should be able to answer to the #line_and_column message. 
+  # Construct a slice using a string, an offset and an optional line cache.
+  # The line cache should be able to answer to the #line_and_column message.
   #
-  def initialize(position, string, line_cache=nil)
+  def initialize(position, string, line_cache = nil)
     @position = position
     @str = string
     @line_cache = line_cache
@@ -42,7 +39,7 @@ class Parslet::Slice
 
   # Compares slices to other slices or strings.
   #
-  def == other
+  def ==(other)
     str == other
   end
 
@@ -59,10 +56,10 @@ class Parslet::Slice
   end
 
   alias length size
-  
-  # Concatenate two slices; it is assumed that the second slice begins 
+
+  # Concatenate two slices; it is assumed that the second slice begins
   # where the first one ends. The offset of the resulting slice is the same
-  # as the one of this slice. 
+  # as the one of this slice.
   #
   def +(other)
     self.class.new(@position, str + other.to_s, line_cache)
@@ -71,12 +68,11 @@ class Parslet::Slice
   # Returns a <line, column> tuple referring to the original input.
   #
   def line_and_column
-    raise ArgumentError, "No line cache was given, cannot infer line and column." \
+    raise ArgumentError, 'No line cache was given, cannot infer line and column.' \
       unless line_cache
 
     line_cache.line_and_column(@position.bytepos)
   end
-
 
   # Conversion operators -----------------------------------------------------
   def to_str
@@ -87,12 +83,15 @@ class Parslet::Slice
   def to_slice
     self
   end
+
   def to_sym
     str.to_sym
   end
+
   def to_i
     self.str.to_i
   end
+
   def to_f
     str.to_f
   end
@@ -101,7 +100,6 @@ class Parslet::Slice
 
   # Prints the slice as <code>"string"@offset</code>.
   def inspect
-
     str.inspect + "@#{offset}"
   end
 end

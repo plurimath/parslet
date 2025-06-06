@@ -54,3 +54,19 @@ def slet(name, &block)
   let(name, &block)
   subject(&block)
 end
+
+# Helper method to convert Parslet::Slice objects to plain strings for comparison
+def strip_positions(obj)
+  case obj
+  when Parslet::Slice
+    obj.to_s
+  when Hash
+    obj.transform_values { |v| strip_positions(v) }
+  when Array
+    obj.map { |item| strip_positions(item) }
+  when String
+    obj.gsub(/@\d+/, '') # Remove slice of text
+  else
+    obj
+  end
+end

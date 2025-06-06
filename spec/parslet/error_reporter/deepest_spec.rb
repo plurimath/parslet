@@ -6,31 +6,25 @@ describe Parslet::ErrorReporter::Deepest do
 
   describe '#err' do
     before do
-      fake_source.should_receive(
-        pos: 13,
-        line_and_column: [1, 1],
-      )
+      allow(fake_source).to receive(:pos).and_return(13)
+      allow(fake_source).to receive(:line_and_column).and_return([1, 1])
     end
 
     it 'returns the deepest cause' do
       expect(reporter).to receive(:deepest).and_return(:deepest)
-      reporter.err('parslet', fake_source, 'message')
-        .should == :deepest
+      expect(reporter.err('parslet', fake_source, 'message')).to eq(:deepest)
     end
   end
 
   describe '#err_at' do
     before do
-      fake_source.should_receive(
-        pos: 13,
-        line_and_column: [1, 1],
-      )
+      allow(fake_source).to receive(:pos).and_return(13)
+      allow(fake_source).to receive(:line_and_column).and_return([1, 1])
     end
 
     it 'returns the deepest cause' do
       expect(reporter).to receive(:deepest).and_return(:deepest)
-      reporter.err('parslet', fake_source, 'message', 13)
-        .should == :deepest
+      expect(reporter.err('parslet', fake_source, 'message', 13)).to eq(:deepest)
     end
   end
 
