@@ -89,12 +89,9 @@ describe Parslet::ErrorReporter::Contextual do
   end
 
   describe '#reset' do
-    before do
-      fake_source.should_receive(
-        pos: Parslet::Position.new('source', 13, 13),
-        line_and_column: [1, 1],
-      )
-    end
+    before(:each) { fake_source.should_receive(
+      :pos => Parslet::Position.new('source', 13),
+      :line_and_column => [1,1]) }
 
     it 'resets deepest cause on success of sibling expression' do
       expect(reporter).to receive(:deepest).and_return(:deepest)
@@ -106,12 +103,9 @@ describe Parslet::ErrorReporter::Contextual do
   end
 
   describe 'label' do
-    before do
-      fake_source.should_receive(
-        pos: Parslet::Position.new('source', 13, 13),
-        line_and_column: [1, 1],
-      )
-    end
+    before(:each) { fake_source.should_receive(
+      :pos => Parslet::Position.new('source', 13),
+      :line_and_column => [1,1]) }
 
     it 'sets label if atom has one' do
       fake_atom.should_receive(:label).once.and_return('label')
