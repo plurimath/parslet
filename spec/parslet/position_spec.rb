@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 describe Parslet::Position do
-  slet(:position) { described_class.new('öäüö', 4, 2) }
+  slet(:position) { described_class.new('öäüö', 4) }
 
   it 'should have a charpos of 2' do
     position.charpos.should == 2
