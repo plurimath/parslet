@@ -85,12 +85,16 @@ describe Parslet::Atoms do
   end
 
   describe '< Parslet::Parser' do
-    let(:parslet) { Parslet::Parser.new }
+    let(:parslet) do
+      Class.new(Parslet::Parser) do
+        rule(:test_rule) { str('test') }
+        root(:test_rule)
+      end.new
+    end
 
     it 'calls back to visitor' do
-      expect(visitor).to receive(:visit_parser).with(:root).once
+      expect(visitor).to receive(:visit_parser).with(Parslet::Atoms::Base).once
 
-      allow(parslet).to receive(:root).and_return(:root)
       parslet.accept(visitor)
     end
   end

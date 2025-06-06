@@ -8,31 +8,25 @@ describe Parslet::ErrorReporter::Contextual do
 
   describe '#err' do
     before do
-      fake_source.should_receive(
-        pos: 13,
-        line_and_column: [1, 1],
-      )
+      allow(fake_source).to receive(:pos).and_return(13)
+      allow(fake_source).to receive(:line_and_column).and_return([1, 1])
     end
 
     it 'returns the deepest cause' do
       expect(reporter).to receive(:deepest).and_return(:deepest)
-      reporter.err('parslet', fake_source, 'message')
-        .should == :deepest
+      expect(reporter.err('parslet', fake_source, 'message')).to eq(:deepest)
     end
   end
 
   describe '#err_at' do
     before do
-      fake_source.should_receive(
-        pos: 13,
-        line_and_column: [1, 1],
-      )
+      allow(fake_source).to receive(:pos).and_return(13)
+      allow(fake_source).to receive(:line_and_column).and_return([1, 1])
     end
 
     it 'returns the deepest cause' do
       expect(reporter).to receive(:deepest).and_return(:deepest)
-      reporter.err('parslet', fake_source, 'message', 13)
-        .should == :deepest
+      expect(reporter.err('parslet', fake_source, 'message', 13)).to eq(:deepest)
     end
   end
 
@@ -89,37 +83,36 @@ describe Parslet::ErrorReporter::Contextual do
   end
 
   describe '#reset' do
-    before(:each) { fake_source.should_receive(
-      :pos => Parslet::Position.new('source', 13),
-      :line_and_column => [1,1]) }
+    before do
+      allow(fake_source).to receive(:pos).and_return(Parslet::Position.new('source', 13))
+      allow(fake_source).to receive(:line_and_column).and_return([1, 1])
+    end
 
     it 'resets deepest cause on success of sibling expression' do
       expect(reporter).to receive(:deepest).and_return(:deepest)
-      reporter.err('parslet', fake_source, 'message')
-        .should == :deepest
+      expect(reporter.err('parslet', fake_source, 'message')).to eq(:deepest)
       expect(reporter).to receive(:reset).once
       reporter.succ(fake_source)
     end
   end
 
   describe 'label' do
-    before(:each) { fake_source.should_receive(
-      :pos => Parslet::Position.new('source', 13),
-      :line_and_column => [1,1]) }
+    before do
+      allow(fake_source).to receive(:pos).and_return(Parslet::Position.new('source', 13))
+      allow(fake_source).to receive(:line_and_column).and_return([1, 1])
+    end
 
     it 'sets label if atom has one' do
-      fake_atom.should_receive(:label).once.and_return('label')
-      fake_cause.should_receive(:set_label).once
+      expect(fake_atom).to receive(:label).once.and_return('label')
+      expect(fake_cause).to receive(:set_label).once
       expect(reporter).to receive(:deepest).and_return(fake_cause)
-      reporter.err(fake_atom, fake_source, 'message')
-        .should == fake_cause
+      expect(reporter.err(fake_atom, fake_source, 'message')).to eq(fake_cause)
     end
 
     it 'does not set label if atom does not have one' do
       expect(reporter).to receive(:deepest).and_return(:deepest)
-      fake_atom.should_receive(:update_label).never
-      reporter.err(fake_atom, fake_source, 'message')
-        .should == :deepest
+      expect(fake_atom).not_to receive(:update_label)
+      expect(reporter.err(fake_atom, fake_source, 'message')).to eq(:deepest)
     end
   end
 end

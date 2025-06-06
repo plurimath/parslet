@@ -133,8 +133,26 @@ $ bundle install
 
 * `rake spec` - Run all tests (438 examples covering all functionality)
 * `rake spec:unit` - Run unit tests only
+* `rake spec:opal` - Run Opal (JavaScript) tests (437 examples)
 
-NOTE: Opal (JavaScript) tests are currently disabled due to compatibility issues with Ruby 3.3+. The Opal gem uses deprecated methods that were removed in newer Ruby versions.
+===== Running Opal tests
+
+The Opal test suite runs the same specs as the Ruby test suite but in a
+JavaScript environment via Node.js. This ensures parslet works correctly when
+compiled to JavaScript with Opal.
+
+To run all Opal tests:
+
+[source,bash]
+----
+$ bundle exec rake spec:opal
+----
+
+The Opal specs are located in the `spec-opal/` directory and mirror the
+structure of the main `spec/` directory.
+
+NOTE: Some Opal tests may fail due to environment differences between Ruby and
+JavaScript execution, but the core parsing functionality is fully supported.
 
 ==== Benchmarking
 

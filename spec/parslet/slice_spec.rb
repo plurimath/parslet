@@ -1,68 +1,85 @@
 require 'spec_helper'
 
 describe Parslet::Slice do
-  def cslice string, offset, cache=nil
+  def cslice(string, offset, cache = nil)
     described_class.new(
-      Parslet::Position.new(string, offset), 
-      string, cache)
+      Parslet::Position.new(string, offset),
+      string, cache
+    )
   end
 
-  describe "construction" do
-    it "should construct from an offset and a string" do
+  describe 'construction' do
+    it 'constructs from an offset and a string' do
       cslice('foobar', 40)
     end
   end
+
   context "('foobar', 40, 'foobar')" do
     let(:slice) { cslice('foobar', 40) }
-    describe "comparison" do
-      it "should be equal to other slices with the same attributes" do
+
+    describe 'comparison' do
+      it 'is equal to other slices with the same attributes' do
         other = cslice('foobar', 40)
         slice.should == other
         other.should == slice
-      end 
-      it "should be equal to other slices (offset is irrelevant for comparison)" do
+      end
+
+      it 'is equal to other slices (offset is irrelevant for comparison)' do
         other = cslice('foobar', 41)
         slice.should == other
         other.should == slice
-      end 
-      it "should be equal to a string with the same content" do
+      end
+
+      it 'is equal to a string with the same content' do
         slice.should == 'foobar'
       end
-      it "should be equal to a string (inversed operands)" do
+
+      it 'is equal to a string (inversed operands)' do
         'foobar'.should == slice
-      end 
-      it "should not be equal to a string" do
+      end
+
+      it 'is not equal to a string' do
         slice.should_not equal('foobar')
-      end 
-      it "should not be eql to a string" do
+      end
+
+      it 'is not eql to a string' do
+        # For Opal we have redefined inspect to return the string itself
+        skip if RUBY_ENGINE == 'opal'
+
         slice.should_not eql('foobar')
-      end 
-      it "should not hash to the same number" do
+      end
+
+      it 'does not hash to the same number' do
+        # In Opal, the hash of a string is the same as the string itself when we redefined inspect
+        skip if RUBY_ENGINE == 'opal'
         slice.hash.should_not == 'foobar'.hash
-      end 
+      end
     end
-    describe "offset" do
-      it "should return the associated offset" do
+
+    describe 'offset' do
+      it 'returns the associated offset' do
         slice.offset.should == 6
       end
-      it "should fail to return a line and column" do
+
+      it 'fails to return a line and column' do
         lambda {
           slice.line_and_column
         }.should raise_error(ArgumentError)
-      end 
-      
-      context "when constructed with a source" do
-        let(:slice) { cslice(
-          'foobar', 40,  
-          flexmock(:cache, :line_and_column => [13, 14])) }
-        it "should return proper line and column" do
+      end
+
+      context 'when constructed with a source' do
+        let(:cache) { double(:cache, line_and_column: [13, 14]) }
+        let(:slice) { cslice('foobar', 40, cache) }
+
+        it 'returns proper line and column' do
           slice.line_and_column.should == [13, 14]
         end
       end
     end
-    describe "string methods" do
-      describe "matching" do
-        it "should match as a string would" do
+
+    describe 'string methods' do
+      describe 'matching' do
+        it 'matches as a string would' do
           slice.should match(/bar/)
           slice.should match(/foo/)
 
@@ -70,23 +87,29 @@ describe Parslet::Slice do
           md.captures.first.should == 'o'
         end
       end
-      describe "<- #size" do
+
+      describe '<- #size' do
         subject { slice.size }
-        it { should == 6 } 
+
+        it { is_expected.to eq(6) }
       end
-      describe "<- #length" do
+
+      describe '<- #length' do
         subject { slice.length }
-        it { should == 6 } 
+
+        it { is_expected.to eq(6) }
       end
-      describe "<- #+" do
-        let(:other) { cslice('baz', 10) }
+
+      describe '<- #+' do
         subject { slice + other }
-        
-        it "should concat like string does" do
+
+        let(:other) { cslice('baz', 10) }
+
+        it 'concats like string does' do
           subject.size.should == 9
           subject.should == 'foobarbaz'
           subject.offset.should == 6
-        end 
+        end
       end
     end
 
@@ -94,21 +117,23 @@ describe Parslet::Slice do
       describe '<- #to_slice' do
         it 'returns self' do
           slice.to_slice.should eq(slice)
-        end 
+        end
       end
 
       describe '<- #to_sym' do
         it 'returns :foobar' do
           slice.to_sym.should == :foobar
-        end 
+        end
       end
-      describe "cast to Float" do
-        it "should return a float" do
+
+      describe 'cast to Float' do
+        it 'returns a float' do
           Float(cslice('1.345', 11)).should == 1.345
-        end 
+        end
       end
-      describe "cast to Integer" do
-        it "should cast to integer as a string would" do
+
+      describe 'cast to Integer' do
+        it 'casts to integer as a string would' do
           s = cslice('1234', 40)
           Integer(s).should == 1234
           s.to_i.should == 1234
@@ -128,7 +153,13 @@ describe Parslet::Slice do
       describe '#inspect' do
         subject { slice.inspect }
 
-        it { is_expected.to eq('"foobar"@6') }
+
+        it {
+          # For Opal we have redefined inspect to return the string itself
+          skip if RUBY_ENGINE == 'opal'
+
+          is_expected.to eq('"foobar"@6')
+        }
       end
 
       describe '#to_s' do
@@ -144,7 +175,7 @@ describe Parslet::Slice do
       end
 
       context 'when storing a line cache' do
-        let(:slice) { cslice('foobar', 40, 40, Parslet::Source::LineCache.new) }
+        let(:slice) { cslice('foobar', 40, Parslet::Source::LineCache.new) }
 
         it 'serializes' do
           Marshal.dump(slice)
