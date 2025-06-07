@@ -1,9 +1,9 @@
-grammar MiniLisp
+grammar MiniLisp::Parser
   rule root
     (expression)
   end
   rule expression
-    ((space_p) "(" (space_p) (body) ")")
+    ((space_p) "(" (space_p) (body) ")" (space_p))
   end
   rule space_p
     (space)0*1
