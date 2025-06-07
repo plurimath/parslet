@@ -77,8 +77,8 @@ This library is intended to work with Ruby variants >= 2.7. It has been tested o
 
 * MRI Ruby 2.7+
 * JRuby
-
-NOTE: Opal (JavaScript-based Ruby) compatibility is currently limited due to dependency issues with newer Ruby versions. The Opal ecosystem has compatibility challenges with Ruby 3.3+.
+* Opal (works as Ruby 3.2, with the limitation of `StringScanner#charpos` not being
+  available, which is used in some examples)
 
 Please report as a bug if you encounter issues.
 
