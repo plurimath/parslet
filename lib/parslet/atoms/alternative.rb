@@ -63,6 +63,19 @@ class Parslet::Atoms::Alternative < Parslet::Atoms::Base
   end
 
   def try(source, context, consume_all)
+    if self.debug_mode
+      errors = alternatives.map { |a|
+        success, value = result = a.apply(source, context, consume_all)
+        return result if success
+
+        # Aggregate all errors
+        value
+      }
+
+      # If we reach this point, all alternatives have failed.
+      return context.err(self, source, error_msg, errors)
+    end
+
     # TODO: this optimization should be disabled if the order of @alternatives matters
     if apply_group_optimization?
       @alternatives_by_char.each_key do |ch|
@@ -94,16 +107,20 @@ class Parslet::Atoms::Alternative < Parslet::Atoms::Base
 
   precedence ALTERNATE
   def to_s_inner(prec)
-    # Don't dump all the alternatives, it takes too much time
-    limit = 5
-    items = alternatives.first(limit)
-                        .map { |a| "#{a.class}[#{a.to_s(prec).gsub("\n", " ")}]" }
-                        .join(' / ')
+    if self.debug_mode
+      alternatives.map { |a| a.to_s(prec) }.join(' / ')
+    else
+      # Don't dump all the alternatives, it takes too much time
+      limit = 5
+      items = alternatives.first(limit)
+                          .map { |a| "#{a.class}[#{a.to_s(prec).gsub("\n", " ")}]" }
+                          .join(' / ')
 
-    if alternatives.size > limit
-      items += " and (#{alternatives.size - limit}) more"
+      if alternatives.size > limit
+        items += " and (#{alternatives.size - limit}) more"
+      end
+
+      items
     end
-
-    items
   end
 end

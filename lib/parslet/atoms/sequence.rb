@@ -13,11 +13,17 @@ class Parslet::Atoms::Sequence < Parslet::Atoms::Base
   end
 
   def error_msgs
-    @error_msgs ||= {
-      failed: "Failed to match sequence (<omited for performance reasons>)"
-    }
+    @error_msgs ||= if debug_mode
+      {
+        failed: "Failed to match sequence (#{inspect})",
+      }
+    else
+      {
+        failed: "Failed to match sequence (<omited for performance reasons>)",
+      }
+                    end
   end
-  
+
   def >>(parslet)
     self.class.new(* @parslets+[parslet])
   end
@@ -51,6 +57,25 @@ class Parslet::Atoms::Sequence < Parslet::Atoms::Base
   end
 
   def try(source, context, consume_all)
+    if debug_mode
+      # Presize an array
+      result = Array.new(parslets.size + 1)
+      result[0] = :sequence
+
+      parslets.each_with_index do |p, idx|
+        child_consume_all = consume_all && (idx == parslets.size-1)
+        success, value = p.apply(source, context, child_consume_all)
+
+        unless success
+          return context.err(self, source, error_msgs[:failed], [value])
+        end
+
+        result[idx+1] = value
+      end
+
+      return succ(result)
+    end
+
     # Lazy init array
     result = nil
 

@@ -160,6 +160,12 @@ class Parslet::Atoms::Base
   def inspect
     to_s(OUTER)
   end
+
+  def debug_mode
+    # TODO: detect rake is running
+    true
+  end
+
 private
 
   # Produces an instance of Success and returns it. 
