@@ -29,14 +29,14 @@ class MyParser < Parslet::Parser
   rule(:primary) { lparen >> or_operation >> rparen | var }
 
   # Note that following rules are both right-recursive.
-  rule(:and_operation) { 
-    (primary.as(:left) >> and_operator >> 
-      and_operation.as(:right)).as(:and) | 
+  rule(:and_operation) {
+    (primary.as(:left) >> and_operator >>
+      and_operation.as(:right)).as(:and) |
     primary }
-    
-  rule(:or_operation)  { 
-    (and_operation.as(:left) >> or_operator >> 
-      or_operation.as(:right)).as(:or) | 
+
+  rule(:or_operation)  {
+    (and_operation.as(:left) >> or_operator >>
+      or_operation.as(:right)).as(:or) |
     and_operation }
 
   # We start at the lowest precedence rule.
@@ -60,11 +60,3 @@ class Transformer < Parslet::Transform
      res
   end
 end
-
-pp tree = MyParser.new.parse("var1 and (var2 or var3)")
-# {:and=>
-#   {:left=>{:var=>"1"@3},
-#    :right=>{:or=>{:left=>{:var=>"2"@13}, :right=>{:var=>"3"@21}}}}}
-pp Transformer.new.apply(tree)
-# [["1", "2"], ["1", "3"]]
-

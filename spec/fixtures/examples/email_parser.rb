@@ -40,15 +40,3 @@ class EmailSanitizer < Parslet::Transform
 
   rule(:email => sequence(:email)) { email.join }
 end
-
-parser = EmailParser.new
-sanitizer = EmailSanitizer.new
-
-input = ARGV[0] || begin
-  default = "a.b.c.d@gmail.com"
-  STDERR.puts "usage: #{$0} \"EMAIL_ADDR\""
-  STDOUT.puts "since you haven't specified any EMAIL_ADDR, for testing purposes we're using #{default}"
-  default
-end
-
-p sanitizer.apply(parser.parse_with_debug(input))

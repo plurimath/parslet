@@ -98,31 +98,10 @@ module MyJson
   end
 
   def self.parse(s)
-
     parser = Parser.new
     transformer = Transformer.new
 
     tree = parser.parse(s)
-    puts; p tree; puts
-    out = transformer.apply(tree)
-
-    out
+    transformer.apply(tree)
   end
 end
-
-
-s = %{
-  [ 1, 2, 3, null,
-    "asdfasdf asdfds", { "a": -1.2 }, { "b": true, "c": false },
-    0.1e24, true, false, [ 1 ] ]
-}
-
-out = MyJson.parse(s)
-
-p out; puts
-
-out == [
-  1, 2, 3, nil,
-  "asdfasdf asdfds", { "a" => -1.2 }, { "b" => true, "c" => false },
-  0.1e24, true, false, [ 1 ]
-] || raise("MyJson is a failure")
