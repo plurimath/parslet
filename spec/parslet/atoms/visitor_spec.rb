@@ -15,7 +15,7 @@ describe Parslet::Atoms do
   end
 
   describe Parslet::Atoms::Re do
-    let(:parslet) { match['abc'] }
+    let(:parslet) { Parslet.match['abc'] }
 
     it 'calls back visitor' do
       expect(visitor).to receive(:visit_re).with('[abc]').once
