@@ -57,57 +57,51 @@ class Parslet::Atoms::Alternative < Parslet::Atoms::Base
     end
   end
 
-  def lookahead?(source)
+  def lookahead?(_source)
     # We need to stop the recursive lookahead at some point, otherwise it might go too deep
     true
   end
 
   def try(source, context, consume_all)
-    if self.debug_mode
-      errors = alternatives.map { |a|
-        success, value = result = a.apply(source, context, consume_all)
-        return result if success
-
-        # Aggregate all errors
-        value
-      }
-
-      # If we reach this point, all alternatives have failed.
-      return context.err(self, source, error_msg, errors)
-    end
+    debug = debug_mode
+    errors = []
 
     # TODO: this optimization should be disabled if the order of @alternatives matters
     if apply_group_optimization?
       @alternatives_by_char.each_key do |ch|
         char_alternatives = @alternatives_by_char[ch]
         if source.lookahead?(ch)
-          char_alternatives.each { |a|
+          char_alternatives.each do |a|
             next unless a.lookahead?(source)
 
-            success, _ = result = a.apply(source, context, consume_all)
+            success, value = result = a.apply(source, context, consume_all)
             return result if success
-          }
+
+            errors << value if debug
+          end
         end
       end
     else
-      alternatives.each { |a|
+      alternatives.each do |a|
         # Instead of entering the more expensive apply() method,
         # we attempt to look ahead and continue to the next alternative if there's no match
         # The `Constants.precompile_constants` alternative has over 3k options
-        next unless a.lookahead?(source)
+        next unless debug || a.lookahead?(source)
 
-        success, _ = result = a.apply(source, context, consume_all)
+        success, value = result = a.apply(source, context, consume_all)
         return result if success
-      }
+
+        errors << value if debug
+      end
     end
 
     # If we reach this point, all alternatives have failed.
-    context.err(self, source, error_msg)
+    context.err(self, source, error_msg, errors)
   end
 
   precedence ALTERNATE
   def to_s_inner(prec)
-    if self.debug_mode
+    if debug_mode
       alternatives.map { |a| a.to_s(prec) }.join(' / ')
     else
       # Don't dump all the alternatives, it takes too much time

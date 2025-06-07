@@ -57,30 +57,12 @@ class Parslet::Atoms::Sequence < Parslet::Atoms::Base
   end
 
   def try(source, context, consume_all)
-    if debug_mode
-      # Presize an array
-      result = Array.new(parslets.size + 1)
-      result[0] = :sequence
-
-      parslets.each_with_index do |p, idx|
-        child_consume_all = consume_all && (idx == parslets.size-1)
-        success, value = p.apply(source, context, child_consume_all)
-
-        unless success
-          return context.err(self, source, error_msgs[:failed], [value])
-        end
-
-        result[idx+1] = value
-      end
-
-      return succ(result)
-    end
-
     # Lazy init array
     result = nil
+    debug = debug_mode
 
     parslets.each_with_index do |p, idx|
-      unless p.lookahead?(source)
+      unless debug || p.lookahead?(source)
         return context.err(self, source, error_msgs[:failed])
       end
 
@@ -88,14 +70,14 @@ class Parslet::Atoms::Sequence < Parslet::Atoms::Base
       success, value = p.apply(source, context, child_consume_all)
 
       unless success
-        return context.err(self, source, error_msgs[:failed])
+        return context.err(self, source, error_msgs[:failed], debug ? [value] : nil)
       end
 
       if result.nil?
         result = Array.new(parslets.size + 1)
         result[0] = :sequence
       end
-      result[idx+1] = value
+      result[idx + 1] = value
     end
 
     succ(result)
