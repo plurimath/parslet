@@ -20,7 +20,7 @@ describe Parslet do
     attr_reader :parslet
 
     before do
-      @parslet = match('[abc]')
+      @parslet = Parslet.match('[abc]')
     end
 
     it 'parses {a,b,c}' do
@@ -45,7 +45,7 @@ describe Parslet do
     attr_reader :parslet
 
     before do
-      @parslet = match('[a]').repeat(3)
+      @parslet = Parslet.match('[a]').repeat(3)
     end
 
     context "when failing on input 'aa'" do
@@ -335,13 +335,13 @@ describe Parslet do
 
     context "match('[abc]').as(:name)" do
       it "returns :name => 'b'" do
-        match('[abc]').as(:name).parse('b').should == { name: 'b' }
+        Parslet.match('[abc]').as(:name).parse('b').should == { name: 'b' }
       end
     end
 
     context "match('[abc]').repeat.as(:name)" do
       it "returns collated result ('abc')" do
-        match('[abc]').repeat.as(:name)
+        Parslet.match('[abc]').repeat.as(:name)
           .parse('abc').should == { name: 'abc' }
       end
     end

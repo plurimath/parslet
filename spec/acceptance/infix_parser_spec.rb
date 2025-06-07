@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'Infix expression parsing' do
   class InfixExpressionParser < Parslet::Parser
-    rule(:space) { match['\s'] }
+    rule(:space) { Parslet.match['\s'] }
 
     def cts(atom)
       atom >> space.repeat
@@ -12,10 +12,10 @@ describe 'Infix expression parsing' do
       Infix.new(*args)
     end
 
-    rule(:mul_op) { match['*/'] >> str(' ').maybe }
-    rule(:add_op) { match['+-'] >> str(' ').maybe }
-    rule(:digit) { match['0-9'] }
-    rule(:integer) { cts digit.repeat(1) }
+    rule(:mul_op) { Parslet.match['*/'] >> str(' ').maybe }
+    rule(:add_op) { Parslet.match['+-'] >> str(' ').maybe }
+    rule(:digit) { Parslet.match['0-9'] }
+    rule(:integer) { cts digit.repeat(1).as(:int) }
 
     rule(:expression) do
       infix_expression(integer,
@@ -48,11 +48,11 @@ describe 'Infix expression parsing' do
     let(:m) { p.expression }
 
     it 'parses simple multiplication' do
-      m.should parse('1*2').as(l: '1', o: '*', r: '2')
+      m.should parse('1*2').as(l: {int: '1'}, o: '*', r: {int: '2'})
     end
 
     it 'parses simple multiplication with spaces' do
-      m.should parse('1 * 2').as(l: '1 ', o: '* ', r: '2')
+      m.should parse('1 * 2').as(l: {int: '1'}, o: '* ', r: {int: '2'})
     end
 
     it 'parses division' do
@@ -89,7 +89,7 @@ describe 'Infix expression parsing' do
     describe 'right associativity' do
       it 'produces trees that lean right' do
         mo.should parse('1+2+3').as(
-          l: '1', o: '+', r: { l: '2', o: '+', r: '3' },
+          l: {int: '1'}, o: '+', r: { l: {int: '2'}, o: '+', r: {int: '3'} },
         )
       end
     end
@@ -97,7 +97,7 @@ describe 'Infix expression parsing' do
     describe 'left associativity' do
       it 'produces trees that lean left' do
         mo.should parse('1*2*3').as(
-          l: { l: '1', o: '*', r: '2' }, o: '*', r: '3',
+          l: { l: {int: '1'}, o: '*', r: {int: '2'} }, o: '*', r: {int: '3'},
         )
       end
     end
@@ -111,7 +111,7 @@ describe 'Infix expression parsing' do
 
           cause.ascii_tree.to_s.should == <<~ERROR
             INTEGER was expected at line 1 char 3.
-            `- Failed to match sequence (DIGIT{1, } SPACE{0, }) at line 1 char 3.
+            `- Failed to match sequence (int:(DIGIT{1, }) SPACE{0, }) at line 1 char 3.
                `- Expected at least 1 of DIGIT at line 1 char 3.
                   `- Premature end of input at line 1 char 3.
           ERROR

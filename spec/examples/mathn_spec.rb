@@ -46,40 +46,25 @@ squid)
 
   describe 'mathn compatibility' do
     def attempt_parse_with_timeout(timeout = 5)
-      # Create a separate thread to run the parse with a timeout
-      # This ensures we don't hang if there's an infinite loop
-      result = nil
-      error = nil
+      # Opal doesn't support Threads, so we'll just run the parse directly
+      # The mathn compatibility issue was specific to MRI Ruby anyway
+      begin
+        possible_whitespace = Parslet.match['\s'].repeat
+        cephalopod = Parslet.str('octopus') | Parslet.str('squid')
+        parenthesized_cephalopod = Parslet.str('(') >> possible_whitespace >> cephalopod >> possible_whitespace >> Parslet.str(')')
+        parser = possible_whitespace >> parenthesized_cephalopod >> possible_whitespace
 
-      thread = Thread.new do
-        begin
-          possible_whitespace = Parslet.match['\s'].repeat
-          cephalopod = Parslet.str('octopus') | Parslet.str('squid')
-          parenthesized_cephalopod = Parslet.str('(') >> possible_whitespace >> cephalopod >> possible_whitespace >> Parslet.str(')')
-          parser = possible_whitespace >> parenthesized_cephalopod >> possible_whitespace
-
-          parser.parse %{(\nsqeed)\n}
-        rescue Parslet::ParseFailed => e
-          error = e
-        rescue => e
-          error = e
-        end
-      end
-
-      # Wait for the thread to complete or timeout
-      if thread.join(timeout)
-        # Thread completed within timeout
-        raise error if error && !error.is_a?(Parslet::ParseFailed)
-        raise error if error.is_a?(Parslet::ParseFailed)
-      else
-        # Thread didn't complete within timeout - likely hanging
-        thread.kill
-        raise "Parser appears to be hanging (infinite loop)"
+        parser.parse %{(\nsqeed)\n}
+      rescue Parslet::ParseFailed => e
+        raise e
+      rescue => e
+        raise e
       end
     end
 
     it 'terminates properly before requiring mathn' do
       # This should fail with ParseFailed, not hang
+      # In Opal, we don't have the mathn compatibility issue, so this should work fine
       expect { attempt_parse_with_timeout }.to raise_error(Parslet::ParseFailed)
     end
 

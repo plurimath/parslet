@@ -5,7 +5,6 @@ require_relative 'support/opal' if RUBY_ENGINE == 'opal'
 require 'parslet'
 require 'parslet/rig/rspec'
 require 'parslet/atoms/visitor'
-require 'parslet/export'
 
 # Load custom matchers
 require_relative 'support/parslet_matchers'

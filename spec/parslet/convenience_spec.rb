@@ -48,7 +48,7 @@ describe 'parslet/convenience' do
 
     it 'works for all parslets' do
       str('foo').parse_with_debug('foo')
-      match['bar'].parse_with_debug('a')
+      Parslet.match['bar'].parse_with_debug('a')
     end
   end
 end

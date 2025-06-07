@@ -3,6 +3,7 @@
 
 require 'pp'
 require 'parslet'
+require 'parslet/export'
 require 'parslet/convenience'
 
 module MiniLisp
@@ -72,4 +73,3 @@ module MiniLisp
     end
   end
 end
-
