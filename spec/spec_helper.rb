@@ -7,6 +7,9 @@ require 'parslet/rig/rspec'
 require 'parslet/atoms/visitor'
 require 'parslet/export'
 
+# Load custom matchers
+require_relative 'support/parslet_matchers'
+
 begin
   require 'ae'
 rescue LoadError
