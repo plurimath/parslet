@@ -22,6 +22,7 @@ Gem::Specification.new do |spec|
     'documentation_uri' => 'https://kschiess.github.io/parslet/',
     'homepage_uri' => 'https://github.com/plurimath/plurimath-parslet',
     'source_code_uri' => 'https://github.com/plurimath/plurimath-parslet',
+    'rubygems_mfa_required' => 'true',
   }
 
   spec.files = Dir.glob('{lib,spec,example}/**/*') + %w[
@@ -35,8 +36,6 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = '>= 2.7.0'
 
-  spec.add_development_dependency 'opal-rspec', '~> 1.0'
-  spec.add_development_dependency 'opal-sprockets', '~> 1.0'
   spec.add_development_dependency 'rake', '~> 13.0'
   spec.add_development_dependency 'rdoc', '~> 6.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
