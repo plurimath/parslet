@@ -1,5 +1,6 @@
 /vendor/*
 !/vendor/opal
+!/vendor/opal-rspec
 today
 Gemfile.lock
 *.gem

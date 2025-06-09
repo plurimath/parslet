@@ -1,3 +1,6 @@
 [submodule "vendor/opal"]
 	path = vendor/opal
 	url = https://github.com/opal/opal.git
+[submodule "vendor/opal-rspec"]
+	path = vendor/opal-rspec
+	url = git@github.com:opal/opal-rspec.git
