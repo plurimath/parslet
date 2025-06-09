@@ -120,7 +120,7 @@ The gem maintains the original `parslet` namespace for compatibility.
 
 == Examples
 
-The `examples/` directory contains 25 interactive examples that demonstrate various parsing scenarios and techniques. These examples are designed to help you learn parslet by showing real-world parsing problems and their solutions.
+The `examples/` directory contains 27 interactive examples that demonstrate various parsing scenarios and techniques. These examples are designed to help you learn parslet by showing real-world parsing problems and their solutions.
 
 === How to run examples
 
@@ -238,6 +238,14 @@ $ ruby examples/run_calc.rb
 | `run_string_parser.rb`
 | String literal parsing with escaping
 | Quote handling, escape sequences
+
+| `run_html5.rb`
+| HTML5 document parsing with modern features
+| DOCTYPE, void elements, attributes, nested tags, comments
+
+| `run_markdown.rb`
+| Markdown document parsing and transformation
+| Headers, paragraphs, bold/italic text, links, lists, code blocks
 |===
 
 === Example structure
@@ -427,13 +435,14 @@ The exported data includes:
 
 === Example coverage
 
-All 25 examples in the `examples/` directory are covered by specs and tested automatically:
+All 27 examples in the `examples/` directory are covered by specs and tested automatically:
 
 * boolean_algebra.rb, calc.rb, capture.rb, comments.rb, deepest_errors.rb
-* documentation.rb, email_parser.rb, empty.rb, erb.rb, ip_address.rb
-* json.rb, local.rb, mathn.rb, minilisp.rb, modularity.rb
-* nested_errors.rb, optimized_erb.rb, parens.rb, prec_calc.rb, readme.rb
-* scopes.rb, seasons.rb, sentence.rb, simple_xml.rb, string_parser.rb
+* documentation.rb, email_parser.rb, empty.rb, erb.rb, html5.rb
+* ip_address.rb, json.rb, local.rb, markdown.rb, mathn.rb
+* minilisp.rb, modularity.rb, nested_errors.rb, optimized_erb.rb, parens.rb
+* prec_calc.rb, readme.rb, scopes.rb, seasons.rb, sentence.rb
+* simple_xml.rb, string_parser.rb
 
 == Contributing
 
