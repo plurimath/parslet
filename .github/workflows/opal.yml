@@ -26,7 +26,7 @@ jobs:
         node-version: '18'
 
     - name: Run Opal tests
-      run: bundle exec opal-rspec
+      run: bundle exec rake spec:opal
 
   lint:
     runs-on: ubuntu-latest
