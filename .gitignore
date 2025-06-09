@@ -7,7 +7,6 @@ Gemfile.lock
 website/.sass-cache
 .yardoc
 test.rb
-.rspec
 .bundle
 doc
 pkg
