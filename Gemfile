@@ -6,6 +6,7 @@ gemspec
 
 gem "base64"
 gem "benchmark-ips"
+gem "mathn" # For the mathn compatibility test only
 gem "racc"
 gem "rake"
 gem "rdoc"

@@ -68,24 +68,17 @@ squid)
       expect { attempt_parse_with_timeout }.to raise_error(Parslet::ParseFailed)
     end
 
-    # Skip mathn test on Ruby 2.5+ since mathn was deprecated
-    if RUBY_VERSION.gsub(/[^\d]/, '').to_i < 250
-      it 'still terminates properly after requiring mathn' do
-        # Require mathn in an isolated way
-        begin
-          require 'mathn'
+    it 'still terminates properly after requiring mathn' do
+      # Skip this test in Opal since mathn is not available there
+      if RUBY_ENGINE == 'opal'
+        skip "mathn not available in Opal"
+      end
 
-          # This should still fail with ParseFailed, not hang
-          # The fix in parslet should prevent infinite loops even with mathn loaded
-          expect { attempt_parse_with_timeout }.to raise_error(Parslet::ParseFailed)
-        rescue LoadError
-          skip "mathn not available in this Ruby version"
-        end
-      end
-    else
-      it 'skips mathn test on Ruby 2.5+' do
-        skip "mathn was deprecated in Ruby 2.5+"
-      end
+      require 'mathn'
+
+      # This should still fail with ParseFailed, not hang
+      # The fix in parslet should prevent infinite loops even with mathn loaded
+      expect { attempt_parse_with_timeout }.to raise_error(Parslet::ParseFailed)
     end
   end
 
