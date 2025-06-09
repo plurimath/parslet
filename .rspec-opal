@@ -1,5 +1,6 @@
 --default-path=spec
 --pattern='spec/**/*_spec.{rb,opal}'
 -I lib
+--require=spec_helper
 --opal-opt=-g,plurimath-parslet
 -I spec/support/opal

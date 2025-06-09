@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+puts "Running tests with Ruby version: #{RUBY_VERSION} (#{RUBY_ENGINE})"
 
 require_relative 'support/opal' if RUBY_ENGINE == 'opal'
 
@@ -8,12 +9,6 @@ require 'parslet/atoms/visitor'
 
 # Load custom matchers
 require_relative 'support/parslet_matchers'
-
-begin
-  require 'ae'
-rescue LoadError
-  # AE not available
-end
 
 RSpec.configure do |config|
   # Allow both old and new syntax for backward compatibility
@@ -50,11 +45,6 @@ def catch_failed_parse
     exception = e
   end
   exception&.parse_failure_cause
-end
-
-def slet(name, &block)
-  let(name, &block)
-  subject(&block)
 end
 
 # Helper method to convert Parslet::Slice objects to plain strings for comparison

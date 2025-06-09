@@ -18,6 +18,6 @@ gem "rubocop-rspec"
 # AE is needed for Opal compatibility, see spec/support/opal.rb.erb
 gem "ae"
 gem "opal", path: "vendor/opal"
-gem "opal-rspec", path: 'vendor/opal-rspec'
+gem "opal-rspec"#, path: 'vendor/opal-rspec'
 gem "opal-sprockets" # , path: 'vendor/opal-sprockets'
 gem "qed"
