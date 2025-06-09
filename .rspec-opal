@@ -2,8 +2,6 @@
 --pattern='spec/**/*_spec.{rb,opal}'
 -I lib
 --opal-opt=-g,plurimath-parslet
---opal-opt=-g,opal-rspec
---opal-opt=-g,opal-sprockets
 -I spec
 --require=spec_helper
 --require=support/opal
