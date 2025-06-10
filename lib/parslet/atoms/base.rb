@@ -8,6 +8,8 @@ class Parslet::Atoms::Base
   include Parslet::Atoms::DSL
   include Parslet::Atoms::CanFlatten
 
+  EMPTY_RE = Regexp.compile("")
+
   # Parslet label as provided in grammar
   attr_accessor :label
 
@@ -130,6 +132,17 @@ class Parslet::Atoms::Base
     true
   end
 
+  def lookahead?(source)
+    # Assume lookup is successful by default
+    # Override in child classes by need
+    true
+  end
+
+  def first_char_re
+    # Override in child classes by need
+    EMPTY_RE
+  end
+
   # Debug printing - in Treetop syntax. 
   #
   def self.precedence(prec)
@@ -147,6 +160,12 @@ class Parslet::Atoms::Base
   def inspect
     to_s(OUTER)
   end
+
+  def debug_mode
+    # TODO: detect rake is running
+    true
+  end
+
 private
 
   # Produces an instance of Success and returns it. 

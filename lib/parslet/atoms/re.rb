@@ -23,6 +23,22 @@ class Parslet::Atoms::Re < Parslet::Atoms::Base
     }
   end
 
+  def lookahead?(source)
+    source.lookahead?(@re)
+  end
+
+  def compute_re
+    return @re1 unless @re1.nil?
+    re = EMPTY_RE
+    m = @match
+    re = Regexp.compile(m[0..4]) if m[0] == '[' and m[3] == ']'
+    @re1 = re
+  end
+
+  def first_char_re
+    compute_re
+  end
+
   def try(source, context, consume_all)
     return succ(source.consume(1)) if source.matches?(@re)
     

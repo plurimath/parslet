@@ -12,7 +12,15 @@ class Parslet::Atoms::Named < Parslet::Atoms::Base
 
     @parslet, @name = parslet, name
   end
-  
+
+  def lookahead?(source)
+    @parslet.lookahead?(source)
+  end
+
+  def first_char_re
+    @parslet.first_char_re
+  end
+
   def apply(source, context, consume_all)
     success, value = result = parslet.apply(source, context, consume_all)
 

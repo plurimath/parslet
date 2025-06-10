@@ -34,7 +34,11 @@ module Parslet
       @str.match?(pattern)
     end
     alias match matches?
-    
+
+    def lookahead?(pattern)
+      @str.match?(pattern)
+    end
+
     # Consumes n characters from the input, returning them as a slice of the
     # input. 
     #
